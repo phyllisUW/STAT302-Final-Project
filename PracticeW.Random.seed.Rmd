@@ -1,0 +1,63 @@
+---
+title: ".Random.seed"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## Setting the seed
+
+You will want to set the seed, or find out what value the seed has and save that value, before you begin generating your random nodes. `.Random.seed` does not exist until a random number has been generated or the seed has been set.  We set the seed and then save it with
+
+```{r}
+seeds = vector(length = 2, mode = "list")
+set.seed(12345678)
+seeds[[1]] = .Random.seed
+```
+
+Note that the saved seed is not the same as the value to `set.seed`.  `.Random.seed` is a vector of over 600 integers which are used by the random number generator, and the `set.seed` function creates these values based on the input given.
+
+
+## Saving the seed as you progress
+
+You may want to save the seed, before you create a new set of nodes.
+
+For example, suppose that you run `runif` many times
+
+```{r, collapse=TRUE}
+x = runif(10)
+x
+invisible(replicate(17, runif(10)))
+```
+
+Next let's save the current value of the seed and generate more random values.
+
+```{r, collapse=TRUE}
+seeds[[2]] = .Random.seed
+y = runif(7)
+y
+invisible(replicate(12, runif(3)))
+```
+
+Notice that we used `invisible` to keep all of the random values from printing in our document.
+
+
+Now if you want to recreate `x`, we can set the seed back to `seeds[[1]]` with
+
+```{r, collapse=TRUE}
+.Random.seed = seeds[[1]]
+x2 = runif(10)
+x2
+all(x2 == x)
+```
+
+Or if you want to recreate `y`, we can set the seed back to `seeds[[2]]` with
+
+```{r,collapse=TRUE}
+.Random.seed = seeds[[2]]
+y2 = runif(7)
+y2
+all.equal(y2, y)
+```
+
+Here, we use the `all.equal` function to compare the values in `y` and `y2`.
